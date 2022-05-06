@@ -1,5 +1,6 @@
 from datetime import date
 from http.client import HTTPResponse
+from multiprocessing import context
 import string
 from django.shortcuts import render
 import requests
@@ -16,16 +17,16 @@ class github(APIView):
    
     def post (self,request):
         forksnumber=request.data['forks']
-        commites = int(request.data['commites'])
+        
         
         url=f'https://api.github.com/search/repositories?q=forks:>{forksnumber}+sort:forks-desc'
         githubdata=json.loads((requests.get(url).text))
         reporesults = []
-        for repo in githubdata['items']:
+        for repo in githubdata['items'][:1]:
             print(repo['id'])
             reporesults.append([repo['id'],repo['name'],repo['forks'], repo['commits_url'][:-6]])
         
-        for commits in reporesults[:commites]:
+        for commits in reporesults[:1]:
             print(commits[-1],"commits")
         
             commit_urls=commits[-1]
@@ -54,8 +55,12 @@ class github(APIView):
             
             print("Committee ID", personlist)
             print("Committee count", commitcount)
+            context={"largest_no_of_fork_repo":reporesults,"Committee ID": personlist,"Committee count": commitcount}
 
-        return Response ({"message":"success", "data":commit_data})
+   
+
+        return Response ({"message":"success", "data":context})
+
 
     
 # {"forks":"8"}
