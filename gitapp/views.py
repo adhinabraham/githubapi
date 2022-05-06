@@ -21,6 +21,7 @@ class github(APIView):
         
         url=f'https://api.github.com/search/repositories?q=forks:>{forksnumber}+sort:forks-desc'
         githubdata=json.loads((requests.get(url).text))
+
         reporesults = []
         for repo in githubdata['items'][:1]:
             print(repo['id'])
@@ -55,7 +56,8 @@ class github(APIView):
             
             print("Committee ID", personlist)
             print("Committee count", commitcount)
-            context={"largest_no_of_fork_repo":reporesults,"Committee ID": personlist,"Committee count": commitcount}
+            largestrepo={"largest_reposid":reporesults[0],"no_of_forks":reporesults[0][2]}
+            context={"largest_no_of_fork_repo":largestrepo,"Committee ID": personlist,"Committee count": commitcount}
 
    
 
